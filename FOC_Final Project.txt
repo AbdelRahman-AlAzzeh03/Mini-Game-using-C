@@ -1,0 +1,455 @@
+#include <stdio.h>
+#include "foc_fa22.h"
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+char main_menu (char NAME[100]) //This function is for the main menu.
+{
+char num1;
+    printf("\nHey %s, Please enter the number of the game you wish to play\n",NAME);
+    printf("1.Guess the number\n");
+    printf("2.Hangman\n");
+    printf("3.Exit\n");
+    scanf(" %c",&num1);
+return num1;
+}//main_menu function ends here.
+
+int barGraph(int y) //This is the function that prints out the image needed in Guess the number game.
+{
+int image[150][150];
+int a;
+a=y*10;
+
+for(int row=0;row<150;row++)
+{
+    for(int col=0;col<150;col++)
+    {
+        if (col<=85 && col>=65 && row<=150 && row>=150-a)
+        {
+        image[row][col]=0;
+        }
+        else
+        image[row][col]=250;
+    }
+}
+showArray(150,150,image);
+}//barGraph function ends here.
+
+
+int startGuessTheNumberGame() //This is the function that carries out all the actions with regards to the Guess the number game.
+{
+int Guess,low=1,high=10000,mid,option,count=0;
+int secretNumber;
+    while(1)
+    {	    printf("\nPlease enter a number between 1 and 10000:");
+	    scanf(" %d",&secretNumber);
+	    if(secretNumber>=1 && secretNumber<=10000)
+	    {
+	    	break;
+	    }
+	    else
+	    {
+	    	printf("\nInvalid Input\n");
+	    }
+    }
+	 mid=(high+low)/2;
+	 
+        while(1)
+        {
+            count++;
+            printf("\nMy Guess is:%d",mid);
+            printf("\nPlease choose one of the following options:");
+            printf("\n1.My guess is correct");
+            printf("\n2.The secret number is larger than %d",mid);
+            printf("\n3.The secret number is smaller than %d\n",mid);
+            scanf("%d",&option);
+
+                if(option==1){
+                barGraph(count);
+                break;}
+                else if(option==2){
+                low=mid;
+                mid=(high+low)/2;}
+                else if(option==3){
+                high=mid;
+                mid=(high+low)/2;}
+                else printf("\nInvalid Input");
+        }
+}//startGuessTheNumberGame function ends here.
+
+void startHangmanGame()
+{
+char category = 'b',copiedFile[15][15],letterGuessed,word[15],uScores[20]={"_______________"}; //The 2D array "copiedFile" is where the contents of the text file are stored in.
+int random = rand() % 15,lengthOfWord,attempts = 5,correct = 0;
+FILE *food;
+FILE *objects;
+FILE *names;
+FILE *colors;
+srand(time(NULL));
+
+	while(1)
+	{	
+		printf("\nWelcome to the hangman game\n");
+		printf("Please choose one of the following categories to play in\n");
+		printf("1.Foods\n");
+		printf("2.Objects\n");
+		printf("3.Names\n");
+		printf("4.Colors\n");
+		scanf(" %c",&category);
+		
+		if(category == '1' || category == '2' ||category == '3' ||category == '4')
+		break;
+		
+		else 
+		printf("\nInvalid Input, Please Try Again\n");
+	}
+
+	
+		
+		switch(category)
+		{
+			case '1':;
+				
+			food=fopen("food.txt","r");
+				
+				for(int i=0 ; i<15 ; i++)
+				{
+					fscanf(food,"%s",copiedFile[i]);
+				}
+					
+			fclose (food);
+			lengthOfWord=strlen(copiedFile[random]);
+			uScores[lengthOfWord]='\0';
+			strcpy(word,copiedFile[random]);
+				
+		while(correct<lengthOfWord)
+		{
+			
+			 if(attempts==0)
+			{
+				printf("\nHard Luck! You were not able to guess the word\nThe word was %s\n",word);
+				break;
+			}
+			
+			printf("\nThe letters guessed so far are %s \nYou have %d attempts left\n",uScores,attempts);
+			scanf(" %c",&letterGuessed);
+			
+				for(int y=0 ; y<=lengthOfWord ; y++)
+				
+				{
+				 	if(letterGuessed==word[y])
+					{
+						    for(int a=0;a<=lengthOfWord;a++)
+						    {	
+							if(letterGuessed==word[a])
+							{
+								uScores[a]=letterGuessed;
+								correct ++;
+							}
+						    }
+							
+						    if(correct==lengthOfWord)
+						    {
+							printf("\nCongratulations! You guessed the word\n");
+							break;
+						    }
+							
+						    else
+						    {
+							printf("\nCorrect! Keep going\n"); 
+							break;
+						    }
+							
+						}//end of the if statement responsible for checking the letter is right.
+						
+				 	 else if(word[y]=='\0') 
+					 {	
+						attempts--;
+						
+						if(attempts!=0)
+						{
+							printf("\nNot quite, try again\n");
+						}
+						
+						break;
+					}
+					
+				}//end of the first "for" loop.	
+							
+		}//end of while loop in the first case.
+		
+			break;
+			
+			case '2':;
+			
+			objects=fopen("objects.txt","r");
+				
+				for(int i=0 ; i<15 ; i++)
+				{
+					fscanf(objects,"%s",copiedFile[i]);
+				}
+					
+			fclose (objects);
+			lengthOfWord=strlen(copiedFile[random]);
+			uScores[lengthOfWord]='\0';
+			strcpy(word,copiedFile[random]);
+				
+		while(correct<lengthOfWord)
+		{
+			
+			 if(attempts==0)
+			{
+				printf("\nHard Luck! You were not able to guess the word\nThe word was %s\n",word);
+				break;
+			}
+			
+			printf("\nThe letters guessed so far are %s \nYou have %d attempts left\n",uScores,attempts);
+			scanf(" %c",&letterGuessed);
+			
+				for(int y=0 ; y<=lengthOfWord ; y++)
+				
+				{
+				 	if(letterGuessed==word[y])
+					{
+						    for(int a=0;a<=lengthOfWord;a++)
+						    {	
+							if(letterGuessed==word[a])
+							{
+								uScores[a]=letterGuessed;
+								correct ++;
+							}
+						    }
+							
+						    if(correct==lengthOfWord)
+						    {
+							printf("\nCongratulations! You guessed the word\n");
+							break;
+						    }
+							
+						    else
+						    {
+							printf("\nCorrect! Keep going\n"); 
+							break;
+						    }
+							
+						}//end of the if statement responsible for checking the letter is right.
+						
+				 	 else if(word[y]=='\0') 
+					 {	
+						attempts--;
+						
+						if(attempts!=0)
+						{
+							printf("\nNot quite, try again\n");
+						}
+						
+						break;
+					}
+					
+				}//end of the first "for" loop.	
+							
+		}//end of while loop in the second case.
+		
+			break;
+			
+			case '3':;
+			
+			names=fopen("names.txt","r");
+				
+				for(int i=0 ; i<15 ; i++)
+				{
+					fscanf(names,"%s",copiedFile[i]);
+				}
+					
+			fclose (names);
+			lengthOfWord=strlen(copiedFile[random]);
+			uScores[lengthOfWord]='\0';
+			strcpy(word,copiedFile[random]);
+				
+		while(correct<lengthOfWord)
+		{
+			
+			 if(attempts==0)
+			{
+				printf("\nHard Luck! You were not able to guess the word\nThe word was %s\n",word);
+				break;
+			}
+			
+			printf("\nThe letters guessed so far are %s \nYou have %d attempts left\n",uScores,attempts);
+			scanf(" %c",&letterGuessed);
+			
+				for(int y=0 ; y<=lengthOfWord ; y++)
+				
+				{
+				 	if(letterGuessed==word[y])
+					{
+						    for(int a=0;a<=lengthOfWord;a++)
+						    {	
+							if(letterGuessed==word[a])
+							{
+								uScores[a]=letterGuessed;
+								correct ++;
+							}
+						    }
+							
+						    if(correct==lengthOfWord)
+						    {
+							printf("\nCongratulations! You guessed the word\n");
+							break;
+						    }
+							
+						    else
+						    {
+							printf("\nCorrect! Keep going\n"); 
+							break;
+						    }
+							
+						}//end of the if statement responsible for checking the letter is right.
+						
+				 	 else if(word[y]=='\0') 
+					 {	
+						attempts--;
+						
+						if(attempts!=0)
+						{
+							printf("\nNot quite, try again\n");
+						}
+						
+						break;
+					}
+					
+				}//end of the first "for" loop.	
+							
+		}//end of while loop in the third case.
+		
+			break;
+			
+			case '4':;
+			
+			colors=fopen("colors.txt","r");
+				
+				for(int i=0 ; i<15 ; i++)
+				{
+					fscanf(colors,"%s",copiedFile[i]);
+				}
+					
+			fclose (colors);
+			lengthOfWord=strlen(copiedFile[random]);
+			uScores[lengthOfWord]='\0';
+			strcpy(word,copiedFile[random]);
+				
+		while(correct<lengthOfWord)
+		{
+			
+			 if(attempts==0)
+			{
+				printf("\nHard Luck! You were not able to guess the word\nThe word was %s\n",word);
+				break;
+			}
+			
+			printf("\nThe letters guessed so far are %s \nYou have %d attempts left\n",uScores,attempts);
+			scanf(" %c",&letterGuessed);
+			
+				for(int y=0 ; y<=lengthOfWord ; y++)
+				
+				{
+				 	if(letterGuessed==word[y])
+					{
+						    for(int a=0;a<=lengthOfWord;a++)
+						    {	
+							if(letterGuessed==word[a])
+							{
+								uScores[a]=letterGuessed;
+								correct ++;
+							}
+						    }
+							
+						    if(correct==lengthOfWord)
+						    {
+							printf("\nCongratulations! You guessed the word\n");
+							break;
+						    }
+							
+						    else
+						    {
+							printf("\nCorrect! Keep going\n"); 
+							break;
+						    }
+							
+						}//end of the if statement responsible for checking the letter is right.
+						
+				 	 else if(word[y]=='\0') 
+					 {	
+						attempts--;
+						
+						if(attempts!=0)
+						{
+							printf("\nNot quite, try again\n");
+						}
+						
+						break;
+					}
+					
+				}//end of the first "for" loop.	
+							
+		}//end of while loop in the fourth case.
+		
+			break;
+		
+		
+		
+		
+		
+		
+			default:printf("\nInvalid Input\n");
+		
+		
+		}//end of switch.
+		
+
+
+
+
+
+
+}//end of startHangmanGame function.
+
+
+
+
+int main() //This is the main body of the code where everything is called.
+{
+char name[100];
+printf("\nWelcome to my program, kindly enter your name\n");
+scanf("%s",name);
+
+char num2=main_menu(name);
+
+
+while(1)
+{
+    if(num2=='1')
+    {
+        startGuessTheNumberGame();
+    }
+
+    else if(num2=='2')
+    {
+       startHangmanGame();
+    }
+
+    else if(num2=='3')
+    {
+        printf("\nGoodbye ;)\n");
+        break;
+    }
+
+    else
+        printf("\nInvalid Input, try again\n");
+
+num2=main_menu(name);
+}
+return 0;
+}//This is where the main ends.
+
